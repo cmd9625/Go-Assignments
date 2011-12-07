@@ -28,37 +28,44 @@ func translate(args []string) []string {
     return args
 }
 
-func calc_part(args []string) []string, os.Error {
-    for i := 0; i < len(args); i++ {
+func calc_part(args []string) ([]string, os.Error) {
+    var ret, i int
+    newArgs := make([]string, 0, len(args) - 2)
+    for i = 2; i < len(args); i++ {
+        a, _ := strconv.Atoi(args[i-2])
+        b, _ := strconv.Atoi(args[i-1])
         switch (args[i]) {
-            case "+":
-            case "-":
-            case "*":
-            case "/":
-            case "%":
-            case "<":
-            case "<=":
-            case ">":
-            case ">=":
-            case "=":
-            case "!=":
-            default:
-                _, err := strconv(args[i])
-                if err { return nil, err }
+            case "+": ret = add(a, b); goto Rebuild; break
+            case "-": ret = sub(a, b); goto Rebuild; break
+            case "*": ret = mul(a, b); goto Rebuild; break
+            case "/": ret = div(a, b); goto Rebuild; break
+            case "%": ret = mod(a, b); goto Rebuild; break
+            case "<": ret = lt (a, b); goto Rebuild; break
+            case "<=":ret = lte(a, b); goto Rebuild; break
+            case ">": ret = gt (a, b); goto Rebuild; break
+            case ">=":ret = gte(a, b); goto Rebuild; break
+            case "=": ret = eq (a, b); goto Rebuild; break
+            case "!=":ret = neq(a, b); goto Rebuild; break
         }
     }
+
+Rebuild:
+    if len(args) != 3 {
+        _ = copy(newArgs, args[0:i-2])
+        newArgs = append(newArgs, strconv.Itoa(ret))
+        if i+1 != len(args) { newArgs = append(newArgs, args[i+1:]...) }
+        return calc_part(newArgs)
+    }
+
+    return []string{strconv.Itoa(ret)}, nil
 }
 
-func calculate(args []string) int {
+func calculate(args []string) (int, os.Error) {
     str_res, err := calc_part(args)
-    if err != nil {
-        fmt.Fprintln(os.Stderr, "Parse error")
-        return -1
-    }
-    res, err := strconv.Atoi(str_res)
-    if err == nil { return res }
-
-    fmt.Fprintln(os.Stderr, "Error converting string value to number")
+    if err != nil { return 0, err }
+    res, err := strconv.Atoi(str_res[0])
+    if err == nil { return res, nil }
+    return 0, err
 }
 
 func main() {
@@ -71,7 +78,9 @@ func main() {
     }
 
     args = flag.Args()
-    calculate(translate(args))
+    ret, err := calculate(translate(args))
+    if err != nil { fmt.Println(err.String()); os.Exit(1) }
+    fmt.Printf("%d\n", ret)
 }
 
 // vim:ft=go
