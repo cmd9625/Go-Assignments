@@ -23,6 +23,8 @@ func lt (a int, b int) int { return boolToInt(a <  b) }
 func lte(a int, b int) int { return boolToInt(a <= b) }
 func gt (a int, b int) int { return boolToInt(a >  b) }
 func gte(a int, b int) int { return boolToInt(a >= b) }
+func or (a int, b int) int { if a != 0 { return a }; return b }
+func and(a int, b int) int { if a != 0 && b != 0 { return a }; return 0 }
 
 func translate(args []string) []string {
     return args
@@ -46,6 +48,8 @@ func calc_part(args []string) ([]string, os.Error) {
             case ">=":ret = gte(a, b); goto Rebuild; break
             case "=": ret = eq (a, b); goto Rebuild; break
             case "!=":ret = neq(a, b); goto Rebuild; break
+            case "|": ret = or (a, b); goto Rebuild; break
+            case "&": ret = and(a, b); goto Rebuild; break
         }
     }
 
@@ -69,15 +73,12 @@ func calculate(args []string) (int, os.Error) {
 }
 
 func main() {
-    var args []string
-
     flag.Parse();
-    if len(flag.Args()) == 0 {
+    args := flag.Args()
+    if len(args) == 0 {
         fmt.Fprintln(os.Stderr, "Must specify arguments to expr")
         os.Exit(1)
     }
-
-    args = flag.Args()
     ret, err := calculate(translate(args))
     if err != nil { fmt.Println(err.String()); os.Exit(1) }
     fmt.Printf("%d\n", ret)
