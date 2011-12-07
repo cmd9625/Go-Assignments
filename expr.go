@@ -12,17 +12,6 @@ func boolToInt(a bool) int {
     return 0
 }
 
-func add(a int, b int) int { return a + b }
-func sub(a int, b int) int { return a - b }
-func mul(a int, b int) int { return a * b }
-func div(a int, b int) int { return a / b }
-func mod(a int, b int) int { return a % b }
-func eq (a int, b int) int { return boolToInt(a == b) }
-func neq(a int, b int) int { return boolToInt(a != b) }
-func lt (a int, b int) int { return boolToInt(a <  b) }
-func lte(a int, b int) int { return boolToInt(a <= b) }
-func gt (a int, b int) int { return boolToInt(a >  b) }
-func gte(a int, b int) int { return boolToInt(a >= b) }
 func or (a int, b int) int { if a != 0 { return a }; return b }
 func and(a int, b int) int { if a != 0 && b != 0 { return a }; return 0 }
 
@@ -37,17 +26,17 @@ func calc_part(args []string) ([]string, os.Error) {
         a, _ := strconv.Atoi(args[i-2])
         b, _ := strconv.Atoi(args[i-1])
         switch (args[i]) {
-            case "+": ret = add(a, b); goto Rebuild; break
-            case "-": ret = sub(a, b); goto Rebuild; break
-            case "*": ret = mul(a, b); goto Rebuild; break
-            case "/": ret = div(a, b); goto Rebuild; break
-            case "%": ret = mod(a, b); goto Rebuild; break
-            case "<": ret = lt (a, b); goto Rebuild; break
-            case "<=":ret = lte(a, b); goto Rebuild; break
-            case ">": ret = gt (a, b); goto Rebuild; break
-            case ">=":ret = gte(a, b); goto Rebuild; break
-            case "=": ret = eq (a, b); goto Rebuild; break
-            case "!=":ret = neq(a, b); goto Rebuild; break
+            case "+": ret = a + b; goto Rebuild; break
+            case "-": ret = a - b; goto Rebuild; break
+            case "*": ret = a * b; goto Rebuild; break
+            case "/": ret = a / b; goto Rebuild; break
+            case "%": ret = a % b; goto Rebuild; break
+            case "<": ret = boolToInt(a <  b); goto Rebuild; break
+            case "<=":ret = boolToInt(a <= b); goto Rebuild; break
+            case ">": ret = boolToInt(a >  b); goto Rebuild; break
+            case ">=":ret = boolToInt(a >= b); goto Rebuild; break
+            case "=": ret = boolToInt(a == b); goto Rebuild; break
+            case "!=":ret = boolToInt(a != b); goto Rebuild; break
             case "|": ret = or (a, b); goto Rebuild; break
             case "&": ret = and(a, b); goto Rebuild; break
         }
